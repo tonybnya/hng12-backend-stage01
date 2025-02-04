@@ -1,8 +1,9 @@
 """
 Main application.
 """
+
+import httpx
 import os
-import requests
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from utils import is_armstrong, is_even_or_odd, is_perfect, is_prime, sum_digits
@@ -23,13 +24,26 @@ def home():
         "from": "HNG Internship 12",
         "track": "Backend",
         "stage": 1,
-        "task": "Number Classification API"
+        "task": "Number Classification API",
     }
     return jsonify(data), 200
 
 
+async def get_fun_fact(number):
+    """
+    Get a fun fact about a number.
+    """
+    url = f"http://numbersapi.com/{number}/math"
+    async with httpx.AsyncClient() as client:
+        try:
+            res = await client.get(url, timeout=0.5)
+            return res.text if res.status_code == 200 else "No fun fact available"
+        except httpx.RequestError:
+            return "No fun fact available"
+
+
 @app.route("/api/classify-number", methods=["GET"])
-def classify_number():
+async def classify_number():
     """
     Classify a given number.
     """
@@ -37,47 +51,16 @@ def classify_number():
     number = request.args.get("number")
 
     if number is None:
-        return jsonify(
-            {
-                "number": "alphabet",
-                "error": True
-            }
-        ), 400
+        return jsonify({"number": "alphabet", "error": True}), 400
 
     try:
         number = int(number)
     except ValueError:
-        return jsonify(
-            {
-                "number": "alphabet",
-                "error": True
-            }
-        ), 400
+        return jsonify({"number": "alphabet", "error": True}), 400
 
-    url = f"http://numbersapi.com/{number}/math"
+    fun_fact = await get_fun_fact(number)
 
-    try:
-        res = requests.get(url, timeout=0.5)
-        fun_fact: str = res.text
-    except requests.exceptions.Timeout:
-        return jsonify(
-            {
-                "number": "alphabet",
-                "error": True
-            }
-        ), 400
-    except requests.exceptions.RequestException:
-        return jsonify(
-            {
-                "number": "alphabet",
-                "error": True
-            }
-        ), 400
-
-    props = []
-    if is_armstrong(number):
-        props.append('armstrong')
-
+    props = ["armstrong"] if is_armstrong(number) else []
     props.append(is_even_or_odd(number))
 
     # Generate results
@@ -87,7 +70,7 @@ def classify_number():
         "is_perfect": is_perfect(number),
         "properties": props,
         "digit_sum": sum_digits(number),
-        "fun_fact": fun_fact
+        "fun_fact": fun_fact,
     }
 
     return jsonify(results), 200

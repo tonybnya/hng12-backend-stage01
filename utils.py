@@ -8,15 +8,7 @@ def is_armstrong(n: int) -> bool:
     """
     Check if a number is armstrong or not.
     """
-
-    s: int = n
-    b: int = len(str(n))
-    s1: int = 0
-    while n != 0:
-        r = n % 10
-        s1 += (r ** b)
-        n = n // 10
-    return True if s == s1 else False
+    return n == sum(int(digit) ** len(str(n)) for digit in str(n))
 
 
 def is_even_or_odd(n: int) -> str:
@@ -37,10 +29,7 @@ def is_prime(n: int) -> bool:
         return True
     if n % 2 == 0 or n % 3 == 0:
         return False
-    for i in range(5, int(sqrt(n)) + 1, 2):
-        if n % i == 0:
-            return False
-    return True
+    return all(n % i != 0 for i in range(5, int(sqrt(n)) + 1, 2))
 
 
 def is_perfect(n: int) -> bool:
@@ -50,13 +39,7 @@ def is_perfect(n: int) -> bool:
     if n < 2:
         return False
 
-    sum_divisors: int = 1
-
-    for i in range(2, int(sqrt(n)) + 1):
-        if n % i == 0:
-            sum_divisors += i
-            if i != n // i:
-                sum_divisors += n // i
+    sum_divisors = sum(i + (n // i) for i in range(2, int(sqrt(n)) + 1) if n % i == 0)
 
     return sum_divisors == n
 

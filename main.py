@@ -2,13 +2,11 @@
 Main application.
 """
 
-# import httpx
 import os
 import requests
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from math import sqrt
-# from utils import is_armstrong, is_even_or_odd, is_perfect, is_prime, sum_digits
 
 # create the Flask application
 app = Flask(__name__)
@@ -75,34 +73,6 @@ def sum_digits(n: int) -> int:
         raise ValueError("Invalid number format")
 
 
-# async def get_fun_fact(number):
-#     """
-#     Get a fun fact about a number.
-#     """
-#     url = f"http://numbersapi.com/{number}/math"
-#     async with httpx.AsyncClient() as client:
-#         try:
-#             res = await client.get(url, timeout=0.5)
-#             return res.text if res.status_code == 200 else "No fun fact available"
-#         except httpx.RequestError:
-#             return "No fun fact available"
-
-
-# # define the root endpoint
-# @app.route("/")
-# def home():
-#     """
-#     Root endpoint.
-#     """
-#     data = {
-#         "from": "HNG Internship 12",
-#         "track": "Backend",
-#         "stage": 1,
-#         "task": "Number Classification API",
-#     }
-#     return jsonify(data), 200
-
-
 @app.route("/api/classify-number", methods=["GET"])
 def classify_number():
     """
@@ -119,7 +89,6 @@ def classify_number():
     except ValueError:
         return jsonify({"number": "alphabet", "error": True}), 400
 
-    # fun_fact = await get_fun_fact(number)
     url = f"http://numbersapi.com/{number}/math"
     res = requests.get(url, timeout=0.5)
     fun_fact = res.text if res.status_code == 200 else "No fun fact available"
@@ -142,5 +111,5 @@ def classify_number():
 
 # run the Flask application
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5003))
+    port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)

@@ -5,7 +5,42 @@ Create an API that takes a number and returns interesting mathematical propertie
 
 ## Description
 
+From a query parameter, this API provides some interesting informations about a number:
+
+- if it's a prime or not
+- if it's perfect or not
+- if it's a armstrong number or not
+- if it's an even or an odd number
+- the sum of its digits
+- a fun fact about this number
+
 ## Setup and installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/tonybnya/hng12-backend-stage01.git
+cd hng12-backend-stage01
+```
+
+2. Create a virtual environment and activate it:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate  # On Windows, use: venv\Scripts\activate
+```
+
+3. Install dependencies:
+
+```bash
+pip3 install -r requirements.txt
+```
+
+4. Run the application:
+
+```bash
+python3 main.py
+```
 
 ## API Documentation
 
@@ -45,13 +80,13 @@ Create an API that takes a number and returns interesting mathematical propertie
 Using `curl`:
 
 ```bash
-curl http://localhost:5000/
+curl http://localhost:5000/api/classify-number?number=371
 ```
 
 Using JavaScript `fetch`:
 
 ```javascript
-fetch('http://localhost:5000/')
+fetch('http://localhost:5000/api/classify-number?number=371')
   .then(response => response.json())
   .then(data => console.log(data));
 ```

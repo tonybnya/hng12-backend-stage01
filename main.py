@@ -2,11 +2,13 @@
 Main application.
 """
 
-import httpx
+# import httpx
 import os
+import requests
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from utils import is_armstrong, is_even_or_odd, is_perfect, is_prime, sum_digits
+from math import sqrt
+# from utils import is_armstrong, is_even_or_odd, is_perfect, is_prime, sum_digits
 
 # create the Flask application
 app = Flask(__name__)
@@ -14,36 +16,95 @@ app = Flask(__name__)
 CORS(app)
 
 
-# define the root endpoint
-@app.route("/")
-def home():
+def is_armstrong(n: int) -> bool:
     """
-    Root endpoint.
+    Check if a number is armstrong or not.
     """
-    data = {
-        "from": "HNG Internship 12",
-        "track": "Backend",
-        "stage": 1,
-        "task": "Number Classification API",
-    }
-    return jsonify(data), 200
+    num = abs(n)
+    return num == sum(int(digit) ** len(str(num)) for digit in str(num))
 
 
-async def get_fun_fact(number):
+def is_even_or_odd(n: int) -> str:
     """
-    Get a fun fact about a number.
+    Check if a number is even or odd.
     """
-    url = f"http://numbersapi.com/{number}/math"
-    async with httpx.AsyncClient() as client:
-        try:
-            res = await client.get(url, timeout=0.5)
-            return res.text if res.status_code == 200 else "No fun fact available"
-        except httpx.RequestError:
-            return "No fun fact available"
+    return "even" if abs(n) % 2 == 0 else "odd"
+
+
+def is_prime(n: int) -> bool:
+    """
+    Check if a number is a prime or not.
+    """
+    if abs(n) < 2:
+        return False
+    num = abs(n)
+    if num in (2, 3):
+        return True
+    if num % 2 == 0 or num % 3 == 0:
+        return False
+    return all(num % i != 0 for i in range(5, int(sqrt(num)) + 1, 2))
+
+
+def is_perfect(n: int) -> bool:
+    """
+    Check if a number is perfect or not.
+    """
+    num = abs(n)
+    if num < 2:
+        return False
+
+    sum_divisors = sum(
+        i + (num // i) for i in range(2, int(sqrt(num)) + 1) if num % i == 0
+    )
+
+    return sum_divisors == num
+
+
+def sum_digits(n: int) -> int:
+    """
+    Sum all digits.
+    """
+    try:
+        num = abs(n)
+        total = 0
+        while num > 0:
+            total += num % 10
+            num //= 10
+        return -total if str(n).startswith("-") else total
+    except ValueError:
+        raise ValueError("Invalid number format")
+
+
+# async def get_fun_fact(number):
+#     """
+#     Get a fun fact about a number.
+#     """
+#     url = f"http://numbersapi.com/{number}/math"
+#     async with httpx.AsyncClient() as client:
+#         try:
+#             res = await client.get(url, timeout=0.5)
+#             return res.text if res.status_code == 200 else "No fun fact available"
+#         except httpx.RequestError:
+#             return "No fun fact available"
+
+
+# # define the root endpoint
+# @app.route("/")
+# def home():
+#     """
+#     Root endpoint.
+#     """
+#     data = {
+#         "from": "HNG Internship 12",
+#         "track": "Backend",
+#         "stage": 1,
+#         "task": "Number Classification API",
+#     }
+#     return jsonify(data), 200
 
 
 @app.route("/api/classify-number", methods=["GET"])
-async def classify_number():
+def classify_number():
     """
     Classify a given number.
     """
@@ -58,7 +119,10 @@ async def classify_number():
     except ValueError:
         return jsonify({"number": "alphabet", "error": True}), 400
 
-    fun_fact = await get_fun_fact(number)
+    # fun_fact = await get_fun_fact(number)
+    url = f"http://numbersapi.com/{number}/math"
+    res = requests.get(url, timeout=0.5)
+    fun_fact = res.text if res.status_code == 200 else "No fun fact available"
 
     props = ["armstrong"] if is_armstrong(number) else []
     props.append(is_even_or_odd(number))

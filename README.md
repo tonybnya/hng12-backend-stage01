@@ -47,8 +47,8 @@ python3 main.py
 **Endpoint**:
 
 - Development URL: ``http://localhost:5000/
-- Production URL: ``
-- Method: `GET** <your-domain.com>/api/classify-number?number=371`
+- Production URL: `https://tonybnya-hng12-backend-stage01.onrender.com/`
+- Method: `GET** https://tonybnya-hng12-backend-stage01.onrender.com/api/classify-number?number=371`
 - CORS: Enabled for all origins
 
 **Response Format**:
@@ -81,6 +81,7 @@ Using `curl`:
 
 ```bash
 curl http://localhost:5000/api/classify-number?number=371
+curl https://tonybnya-hng12-backend-stage01.onrender.com/api/classify-number?number=371
 ```
 
 Using JavaScript `fetch`:

@@ -50,8 +50,8 @@ async def classify_number():
     # Get the number from query parameters
     number = request.args.get("number")
 
-    # if number is None:
-    #     return jsonify({"number": "alphabet", "error": True}), 400
+    if number is None:
+        return jsonify({"number": "alphabet", "error": True}), 400
 
     try:
         number = int(number)
